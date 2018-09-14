@@ -4,7 +4,7 @@ from bs4 import BeautifulSoup as Soup
 from bs4 import Tag
 maketrans = str.maketrans
 
-file = "tokyo.kml"
+file = "results.kml"
 
 with open(file,'r',encoding='UTF-8') as f:
     soup = Soup(f, 'lxml-xml')
@@ -23,7 +23,7 @@ for tag in no_tag:
     tag.unwrap()
 for tag in schema_tag:
     tag.unwrap()
-                
+
 for place in dataplace:
     data1 = []
     data2 = []
@@ -34,7 +34,7 @@ for place in dataplace:
         data2.append(subplace)
     datadict = dict(zip(data1,data2))
     datalist.append(datadict)
-    
+
 for place in dataplace:
     next_sib = place.next_sibling
     while(not isinstance(next_sib, Tag)):
@@ -48,6 +48,9 @@ for place in dataplace:
 df1 = pd.DataFrame(datalist)
 df2 = pd.DataFrame(coorlist)
 df2.columns = ["GEOMETRY"]
-findata = pd.concat([df1,df2], axis = 1)
-findata = findata[['KEN','GUN','SIKUCHOSON','JCODE','P_NUM','H_NUM','GEOMETRY']]
-findata.to_csv("findata.csv")
+zenkokudata = pd.concat([df1,df2], axis = 1)
+zenkokudata = zenkokudata[['KEN','SICHO','GUN','SEIREI','SIKUCHOSON','JCODE','P_NUM','H_NUM','GEOMETRY']]
+zenkokudata.to_csv("zenkokudata.csv")
+
+with pd.ExcelWriter("zenkokudata.xlsx") as writer:
+    zenkokudata.to_excel(writer)
